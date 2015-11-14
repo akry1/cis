@@ -9,7 +9,7 @@ import requests
 import csv
 import re
 
-def scrapeWiki(url):
+def scrapeHORs(url):
     congressmanlist = []
     resp = requests.get(url).text
     soup = BeautifulSoup(resp)
@@ -21,12 +21,34 @@ def scrapeWiki(url):
             congressmanlist.append( [name,columns[1].text,columns[2].text])
     return congressmanlist
     
-def writeToCSV(lst):
-    with open('congressman_113th.csv', 'wb') as file:
+    
+def scrapeSenators(url):
+    congressmanlist = []
+    resp = requests.get(url).text
+    soup = BeautifulSoup(resp)
+    table = soup.find('table','wikitable')
+    for i in table.find_all('tr'):
+        columns = i.find_all('td')
+        if columns:
+            columns= columns[0]
+            tdtext = re.search('\((.*)\)',columns.text)            
+            if tdtext:
+                temp = tdtext.groups()[0].split('-')
+            name = columns.find('a').text
+            
+            congressmanlist.append( [name,temp[0],temp[1]])
+    return congressmanlist
+    
+def writeToCSV(lst,name):
+    with open(name, 'wb') as file:
         writer = csv.writer(file)
         writer.writerow(['Name','Party','District'])
         writer.writerows(lst)
     
     
-lst = scrapeWiki('https://en.m.wikipedia.org/wiki/List_of_United_States_Representatives_in_the_113th_Congress_by_seniority')
-writeToCSV(lst)        
+lst = scrapeHORs('https://en.m.wikipedia.org/wiki/List_of_United_States_Representatives_in_the_113th_Congress_by_seniority')
+
+slist = scrapeSenators('https://en.wikipedia.org/wiki/List_of_United_States_Senators_in_the_113th_Congress_by_seniority')
+
+writeToCSV(lst,'HouseOfRepresentatives_113th.csv')   
+writeToCSV(slist,'senators_113th.csv')       

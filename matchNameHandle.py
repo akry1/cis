@@ -4,7 +4,7 @@ import pandas as pd
 
 
 
-def mergeNameHandles(userlistpath,handlelistpath):
+def mergeNameHandles(userlistpath,handlelistpath,output):
     userlist = pd.read_csv(userlistpath,header=0,dtype=str)
     handlelist = pd.read_csv(handlelistpath,header=0,dtype=str)
     
@@ -20,7 +20,7 @@ def mergeNameHandles(userlistpath,handlelistpath):
     userlist['Handle'] = userlist['Name'].apply(lambda x:findSimilarLastname(x,nameHandleDict))    
     #print len(userlist[map(lambda x:True if x is None else False,userlist['Handle2'])])
     print len(userlist[map(lambda x:True if x is None else False,userlist['Handle'])])
-    userlist.to_csv('congressman_final.csv',index=False,header=True)
+    userlist.to_csv(output,index=False,header=True)
     
 def findSimilarName(name,handles):
     if name:
@@ -66,4 +66,5 @@ def minEditDistance(a,b,error=0.1):
 
     return True if D[(len(a)-1,len(b)-1)]/float(len(a)) < error else False
     
-mergeNameHandles('congressman_113th.csv','congressman_handle.csv')
+mergeNameHandles('senators_113th.csv','congressman_handle.csv','senators_handle.csv')
+mergeNameHandles('HouseOfRepresentatives_113th.csv','congressman_handle.csv','HouseOfRepresentatives_handle.csv')
