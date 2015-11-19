@@ -11,25 +11,33 @@ import datetime
 import csv
 import time
 
-#MINTIME = 1353844800
-#MAXTIME = 1420027199
-
 def retrieveAll(fname):
     try:
         rows = []
         mintime= 1353844800
-        for x in xrange(1,21):
+        for k in xrange(1,21):
             mintime= mintime+ 3153600
             maxtime= mintime+ 3153600
             i=1
+            urlDict = {}
             while True:
                 url=''.join(['http://otter.topsy.com/search.json?q=from%3A%40',fname,'&mintime=',str(mintime),'&maxtime=',str(maxtime),'&apikey=09C43A9B270A470B8EB8F2946A9369F3&perpage=100&page=',str(i)])
                 try:
-                    req= requests.get(url).text
-                except requests.ConnectionError:
-                    print "Connection Error"
-                    break
-
+                    req= requests.get(url,timeout=120).text
+                except requests.ConnectionError:                    
+                    if urlDict.get(url,0)==0:
+                        urlDict[url] = 1
+                        print "Connection Error: ",url
+                        continue
+                    else:
+                        break
+                except requests.Timeout:
+                    if urlDict.get(url,0)==0:
+                        urlDict[url] = 1
+                        print "Timeout: ",url
+                        continue
+                    else:
+                        break
                 data = json.loads(req)
 
                 lst = data['response']['list']
@@ -46,21 +54,22 @@ def retrieveAll(fname):
         return rows
     except:
         print "Error in JSON Parsing!!"
+        pass
 
 
 
 def main(filename,outputfile):
     start_time = time.time()
-    output=[]
     with open(outputfile, 'wb') as output:
         writer = csv.writer(output)
         with open(filename,'r') as file:
             reader= csv.reader(file) 
             reader.next() #ignore header                    
             for row in reader:
-                rows = retrieveAll(row[3])
-                if rows and len(rows) > 0:
-                    writer.writerows(rows)  #writing to csv per user as it is expensive to copy into a new list & also avoiding memory error
+                if row[3]:
+                    rows = retrieveAll(row[3])
+                    if rows and len(rows) > 0:
+                        writer.writerows(rows)  #writing to csv per user as it is expensive to copy into a new list & also avoiding memory error
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
@@ -71,7 +80,8 @@ def spark_main(filename,output):
         reader= csv.reader(file)    
         reader.next() #ignore header               
         for row in reader:
-            files.append(row[3])  
+            if row[3]:
+                files.append(row[3])  
     size = 10        
     splitLists = [ files[i:i+size] for i in range(0,len(files),size) ]  
     with open(output, 'wb') as file:
@@ -80,13 +90,18 @@ def spark_main(filename,output):
             print i
             rdd = sc.parallelize(i)
             result = rdd.map(retrieveAll).collect()
-            for l in result:       
-                writer.writerows(l)
+            for l in result:   
+                if l and len(l)>0:
+                    writer.writerows(l)
 
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
 #main()
-#spark_main('senators_handle_final.csv', 'C:\Users\AravindKumarReddy\Desktop\Newfolder\tweets_senator.csv')
+#spark_main('../../cis/senators_handle_final.csv', 'C:\Users\AravindKumarReddy\Desktop\Newfolder\tweets_senator.csv')
 
-main('senators_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_senator.csv')
+
+#spark_main('../../cis/senators_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_senator.csv')
+
+spark_main('../../cis/HouseOfRepresentatives_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps.csv')
+
