@@ -17,8 +17,9 @@ def scrapeHORs(url):
     for i in table.find_all('tr'):
         columns = i.find_all('td')
         if columns:
-            name = re.sub('\[.*\]','',columns[0].text)
-            congressmanlist.append( [name,columns[1].text,columns[2].text])
+            name = re.sub('\[.*\]','',columns[1].text).encode('ascii','ignore')
+            district = ' '.join(columns[3].text.split())
+            congressmanlist.append( [name,columns[2].text,district])
     return congressmanlist
     
     
@@ -46,9 +47,9 @@ def writeToCSV(lst,name):
         writer.writerows(lst)
     
     
-lst = scrapeHORs('https://en.m.wikipedia.org/wiki/List_of_United_States_Representatives_in_the_113th_Congress_by_seniority')
+lst = scrapeHORs('https://en.m.wikipedia.org/wiki/List_of_United_States_Representatives_in_the_114th_Congress_by_seniority')
 
-slist = scrapeSenators('https://en.wikipedia.org/wiki/List_of_United_States_Senators_in_the_113th_Congress_by_seniority')
+#slist = scrapeSenators('https://en.wikipedia.org/wiki/List_of_United_States_Senators_in_the_114th_Congress_by_seniority')
 
-writeToCSV(lst,'HouseOfRepresentatives_113th.csv')   
-writeToCSV(slist,'senators_113th.csv')       
+writeToCSV(lst,'HouseOfRepresentatives_114th.csv')
+#writeToCSV(slist,'senators_114th.csv')

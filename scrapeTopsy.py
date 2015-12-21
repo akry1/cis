@@ -14,8 +14,8 @@ import time
 def retrieveAll(fname):
     try:
         rows = []
-        mintime= 1353844800
-        for k in xrange(1,21):
+        mintime= 1420243200
+        for k in xrange(1,11):
             mintime= mintime+ 3153600
             maxtime= mintime+ 3153600
             i=1
@@ -101,7 +101,7 @@ def spark_main(filename,output):
 #spark_main('../../cis/senators_handle_final.csv', 'C:\Users\AravindKumarReddy\Desktop\Newfolder\tweets_senator.csv')
 
 
-#spark_main('../../cis/senators_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_senator.csv')
+spark_main('../cis/HouseOfRepresentatives114th_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps114th.csv')
 
-spark_main('../../cis/HouseOfRepresentatives_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps.csv')
+#spark_main('../../cis/HouseOfRepresentatives_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps.csv')
 

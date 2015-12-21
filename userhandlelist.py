@@ -17,7 +17,7 @@ def twitterList(path):
     ol = soup.find('ol', id='stream-items-id')    
     li = ol.find_all('li')    
     for i in li:
-        name = i.find('strong','fullname').text
+        name = i.find('strong','fullname').text.encode('ascii','ignore')
         pattern = re.compile(u'^[U][ \.]?[S][\.]?|Rep[\.]?(?=[\sA-Z])|^Sen[\.]?(?=[\sA-Z])|Senator|Congressman|Congresswoman|Senate|Speaker|Cong[\.]?|Judge|[,]?\s[A-Z][a-z]?\.(?=\s)?')
         strippedname = re.sub(pattern,'',name).strip()
         handle = i.find('span','username').text
@@ -27,11 +27,11 @@ def twitterList(path):
     
 
 def writeToCSV(lst):
-    with open('congressman_handle.csv', 'wb') as file:
+    with open('senatesRAW114th_handle.csv', 'wb') as file:
         writer = csv.writer(file)
         writer.writerow(['Twitter Username','Stripped Name','Handle'])
         writer.writerows(lst)
     
     
-userHandlelist = twitterList('F:\Skydrive\Python\cis\memberlist_source.html')
+userHandlelist = twitterList('F:\Skydrive\Python\cis\senates.html')
 writeToCSV(userHandlelist)

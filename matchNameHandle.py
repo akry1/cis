@@ -66,5 +66,5 @@ def minEditDistance(a,b,error=0.1):
 
     return True if D[(len(a)-1,len(b)-1)]/float(len(a)) < error else False
     
-mergeNameHandles('senators_113th.csv','congressman_handle.csv','senators_handle.csv')
-mergeNameHandles('HouseOfRepresentatives_113th.csv','congressman_handle.csv','HouseOfRepresentatives_handle.csv')
+mergeNameHandles('senators_114th.csv','senatesRAW114th_handle.csv','senators114th_handle.csv')
+#mergeNameHandles('HouseOfRepresentatives_114th.csv','congressman114th_handle.csv','HouseOfRepresentatives114th_handle.csv')
