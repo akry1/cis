@@ -14,7 +14,7 @@ import time
 def retrieveAll(fname):
     try:
         rows = []
-        mintime= 1420243200
+        mintime= 1353844800 # for 114th  1420243200
         for k in xrange(1,11):
             mintime= mintime+ 3153600
             maxtime= mintime+ 3153600
@@ -99,9 +99,21 @@ def spark_main(filename,output):
 
 #main()
 #spark_main('../../cis/senators_handle_final.csv', 'C:\Users\AravindKumarReddy\Desktop\Newfolder\tweets_senator.csv')
+def list_main(outputfile):
+    users = ['askgeorge', 'FrankPallone', 'EricCantor', 'CongCulberson', 'JudgeCarter','RepJohnCampbell','RepPaulBrounMD', 'DanMaffeiNY', 'RepGaramendi', 'RepTimGriffin', 
+             'repjustinamash', 'repmichaelgrimm', 'RepHuffman', 'ElectRodneyIL', 'Castro4Congress', 'WeberforTexas']
+             
+    with open(outputfile, 'wb') as output:
+        writer = csv.writer(output) 
+        for row in users:
+            if row:
+                rows = retrieveAll(row)
+                if rows and len(rows) > 0:
+                    writer.writerows(rows)
 
-
-spark_main('../cis/HouseOfRepresentatives114th_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps114th.csv')
+#spark_main('../cis/HouseOfRepresentatives114th_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps114th.csv')
 
 #spark_main('../../cis/HouseOfRepresentatives_handle_final.csv', 'C:\\Users\\AravindKumarReddy\\Desktop\\Newfolder\\tweets_reps.csv')
+
+list_main('D:\\CIS data\\tweets_reps113th_newusers.csv')
 
